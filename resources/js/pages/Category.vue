@@ -44,7 +44,7 @@ const clearErrors = () => {
 
 const add = async () => {
     try {
-        let response = await axios.post('/api/branch',form.value)
+        let response = await axios.post('/api/category',form.value)
         console.log(await response)
         document.getElementById('closeAdd').click()
         form.value.name = ""
@@ -56,7 +56,7 @@ const add = async () => {
 
 const get = async () => {
     try {
-        let response = await axios.get('/api/branch')
+        let response = await axios.get('/api/category')
         rows.value = (await response.data)
     }catch (e) {
         console.log(e.response)
@@ -65,7 +65,7 @@ const get = async () => {
 
 const update = async () => {
     try {
-        let response = await axios.patch(`/api/branch/${ed_form.value.id}`,ed_form.value)
+        let response = await axios.patch(`/api/category/${ed_form.value.id}`,ed_form.value)
         console.log(await response)
         closeEdit()
         await get()
@@ -75,7 +75,7 @@ const update = async () => {
 }
 const showEdit = async (id) => {
     try {
-        let response = await axios.get(`/api/branch/${id}`)
+        let response = await axios.get(`/api/category/${id}`)
         console.log(response)
         ed_form.value.name = (await response.data.name)
         ed_form.value.show_category = (await response.data.show_category)
@@ -96,7 +96,7 @@ const closeEdit = () => {
 const deleteEdit = async (params) => {
     if (window.confirm("Are you sure")) {
         try {
-            await axios.delete(`/api/branch/${params}`)
+            await axios.delete(`/api/category/${params}`)
             await get()
         }catch (e) {
             errors.value = e.response.data.errors
@@ -113,7 +113,7 @@ onMounted(async () => {
 <template>
     <div class="flex justify-between">
         <div>
-            <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Add Branch</button>
+            <button data-modal-target="authentication-modal" data-modal-toggle="authentication-modal" type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Add Category</button>
         </div>
         <div></div>
     </div>
@@ -126,7 +126,7 @@ onMounted(async () => {
                     <span class="sr-only">Close modal</span>
                 </button>
                 <div class="px-6 py-6 lg:px-8">
-                    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Add Branch</h3>
+                    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Add Category</h3>
                     <form @submit.prevent="add" class="space-y-6">
                         <div>
                             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
@@ -149,7 +149,7 @@ onMounted(async () => {
                     <span class="sr-only">Close modal</span>
                 </button>
                 <div class="px-6 py-6 lg:px-8">
-                    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Edit Help Topic</h3>
+                    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Edit Category</h3>
                     <form @submit.prevent="update" class="space-y-6">
                         <div>
                             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>

@@ -37,7 +37,7 @@ class HelpTopicController extends Controller
             'id' => $helpTopic->id,
             'name' => $helpTopic->name,
             'show_category' => $helpTopic->show_category,
-            'ticket_raised' => 0
+            'ticket_raised' => $helpTopic->tickets->count()
         ]);
     }
     public function update(Request $request,HelpTopic $helpTopic)

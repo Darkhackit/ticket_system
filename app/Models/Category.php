@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Branch extends Model
+class Category extends Model
 {
     use HasFactory;
     public function tickets(): \Illuminate\Database\Eloquent\Relations\HasMany

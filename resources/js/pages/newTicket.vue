@@ -1,7 +1,71 @@
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import axios from "axios";
 
-const value = ref("")
+
+const form = ref({
+    value:'',
+    help_topic:'',
+    category:'',
+    branch:'',
+    priority:'',
+    email:'',
+    title:''
+})
+const showMessage = ref(false)
+const showCategory = ref(false)
+const branches = ref([])
+const help_topics = ref([])
+const categories = ref([])
+const priority = ref([
+    'High',
+    'medium',
+    'low'
+])
+
+const getBranches = async () => {
+    try {
+        let response = await axios.get('/api/branch')
+        branches.value = response.data
+    }catch (e) {
+        console.log(e.response)
+    }
+}
+const getHelpTopics = async () => {
+    try {
+        let response = await axios.get('/api/get_topic')
+        help_topics.value = response.data
+    }catch (e) {
+        console.log(e.response)
+    }
+}
+const getCategory = async () => {
+    try {
+        let response = await axios.get('/api/category')
+        categories.value = response.data
+    }catch (e) {
+        console.log(e.response)
+    }
+}
+const getHelp = (val) => {
+    if(val.show_category === 1){
+        showCategory.value = true
+        showMessage.value = true
+    }
+    if (val.show_category === 0){
+        showCategory.value = false
+        showMessage.value = true
+    }
+}
+const submitTicket = () => {
+
+}
+
+onMounted(async () => {
+    await getCategory()
+    await getBranches()
+    await getHelpTopics()
+})
 
 </script>
 <template>
@@ -9,7 +73,7 @@ const value = ref("")
         <div class="flex flex-col md:grid grid-cols-2 lg:grid grid-cols-2   py-32 px-10">
             <div class=" w-full md:w-4/5 lg:w-4/5 ">
             <div class=" p-6 bg-white border border-gray-200 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-                <form  class="space-y-6" action="">
+                <form  class="space-y-6" @submit.prevent="submitTicket">
                     <div class="flex justify-between">
                         <div>
 <!--                            <router-link to="/">Back</router-link>-->
@@ -19,27 +83,37 @@ const value = ref("")
                         </div>
                     </div>
                     <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Department</label>
-                        <v-select :options="['Canada', 'United States']"></v-select>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Branch</label>
+                        <v-select label="name" v-model="form.branch"  :options="branches"></v-select>
                         <p class="text-red-600" ></p>
                     </div>
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Help Topic</label>
-                        <v-select :options="['Canada', 'United States']"></v-select>
+                        <v-select :selected="getHelp(form.help_topic)" v-model="form.help_topic" label="name" :options="help_topics"></v-select>
+                        <p class="text-red-600" ></p>
+                    </div>
+                    <div v-if="showCategory">
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Category</label>
+                        <v-select label="name" v-model="form.category" :options="categories"></v-select>
                         <p class="text-red-600" ></p>
                     </div>
                     <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Category</label>
-                        <v-select :options="['Canada', 'United States']"></v-select>
+                        <label for="priority" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select Priority</label>
+                        <v-select v-model="form.priority" :options="priority"></v-select>
                         <p class="text-red-600" ></p>
                     </div>
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
-                        <input type="email"  id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="username@primeinsuranceghana.com" >
+                        <input type="email" v-model="form.email"  id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="username@primeinsuranceghana.com" >
                         <p class="text-red-600"></p>
                     </div>
-                    <div>
-                        <mavon-editor language="en" v-model="value"/>
+                    <div v-if="showMessage">
+                        <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Title</label>
+                        <input type="text" v-model="form.title"  id="title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
+                        <p class="text-red-600"></p>
+                    </div>
+                    <div v-if="showMessage">
+                        <mavon-editor language="en" v-model="form.value"/>
                     </div>
 
                     <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Open Ticket</button>

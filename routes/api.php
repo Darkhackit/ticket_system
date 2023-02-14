@@ -23,3 +23,15 @@ Route::get('/get_topic',[\App\Http\Controllers\HelpTopicController::class,'index
 Route::get('/get_topic/{helpTopic}',[\App\Http\Controllers\HelpTopicController::class,'show']);
 Route::patch('/get_topic/{helpTopic}',[\App\Http\Controllers\HelpTopicController::class,'update']);
 Route::delete('/get_topic/{helpTopic}',[\App\Http\Controllers\HelpTopicController::class,'delete']);
+
+Route::post('/branch',[\App\Http\Controllers\BranchController::class,'create']);
+Route::get('/branch',[\App\Http\Controllers\BranchController::class,'index']);
+Route::get('/branch/{branch}',[\App\Http\Controllers\BranchController::class,'show']);
+Route::patch('/branch/{branch}',[\App\Http\Controllers\BranchController::class,'update']);
+Route::delete('/branch/{branch}',[\App\Http\Controllers\BranchController::class,'delete']);
+
+Route::post('/category',[\App\Http\Controllers\CategoryController::class,'create']);
+Route::get('/category',[\App\Http\Controllers\CategoryController::class,'index']);
+Route::get('/category/{category}',[\App\Http\Controllers\CategoryController::class,'show']);
+Route::patch('/category/{category}',[\App\Http\Controllers\CategoryController::class,'update']);
+Route::delete('/category/{category}',[\App\Http\Controllers\CategoryController::class,'delete']);

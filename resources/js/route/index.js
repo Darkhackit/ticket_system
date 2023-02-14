@@ -39,6 +39,11 @@ const routes = [
                 path:'/branch',
                 name:'branch',
                 component:() => import('../pages/Branch.vue')
+            },
+            {
+                path:'/category',
+                name:'category',
+                component:() => import('../pages/Category.vue')
             }
         ]
     }
