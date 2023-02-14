@@ -35,3 +35,7 @@ Route::get('/category',[\App\Http\Controllers\CategoryController::class,'index']
 Route::get('/category/{category}',[\App\Http\Controllers\CategoryController::class,'show']);
 Route::patch('/category/{category}',[\App\Http\Controllers\CategoryController::class,'update']);
 Route::delete('/category/{category}',[\App\Http\Controllers\CategoryController::class,'delete']);
+
+
+
+Route::post('/add-ticket/',[\App\Http\Controllers\TicketController::class,'create']);
