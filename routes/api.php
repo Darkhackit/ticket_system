@@ -39,3 +39,6 @@ Route::delete('/category/{category}',[\App\Http\Controllers\CategoryController::
 
 
 Route::post('/add-ticket/',[\App\Http\Controllers\TicketController::class,'create']);
+Route::get('/get-ticket/',[\App\Http\Controllers\TicketController::class,'index']);
+Route::get('/get-ticket/{ticket}',[\App\Http\Controllers\TicketController::class,'show']);
+Route::get('/get_pending/',[\App\Http\Controllers\TicketController::class,'getPendingTicket']);

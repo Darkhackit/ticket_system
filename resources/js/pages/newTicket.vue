@@ -12,6 +12,7 @@ const form = ref({
     email:'',
     title:''
 })
+const processing = ref(false)
 const error = ref([])
 const showMessage = ref(false)
 const showCategory = ref(false)
@@ -26,24 +27,32 @@ const priority = ref([
 
 const getBranches = async () => {
     try {
+        processing.value = true
         let response = await axios.get('/api/branch')
         branches.value = response.data
+        processing.value = false
     }catch (e) {
+        processing.value = false
         console.log(e.response)
     }
 }
 const getHelpTopics = async () => {
     try {
+        processing.value = true
         let response = await axios.get('/api/get_topic')
         help_topics.value = response.data
+        processing.value = false
     }catch (e) {
         console.log(e.response)
+        processing.value = false
     }
 }
 const getCategory = async () => {
     try {
+        processing.value = true
         let response = await axios.get('/api/category')
         categories.value = response.data
+        processing.value = false
     }catch (e) {
         console.log(e.response)
     }
@@ -61,10 +70,12 @@ const getHelp = (val) => {
 }
 const submitTicket = async () => {
     try {
+        processing.value = true
         await axios.post('/api/add-ticket',form.value)
+        processing.value = false
     }catch (e) {
-        console.log(e.response)
         error.value = e.response.data.errors
+        processing.value = false
     }
 }
 
@@ -120,11 +131,12 @@ onMounted(async () => {
                         <p class="text-red-600" v-if="error.title" >{{error.title[0]}}</p>
                     </div>
                     <div v-if="showMessage">
-                        <mavon-editor language="en" v-model="form.value"/>
+                        <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Message</label>
+                        <quill-editor contentType="html" v-model:content="form.value" theme="snow"></quill-editor>
                         <p class="text-red-600" v-if="error.value" >{{error.value[0]}}</p>
                     </div>
 
-                    <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Open Ticket</button>
+                    <button :class="{'cursor-not-allowed':processing}" :disabled="processing" type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Open Ticket</button>
                 </form>
             </div>
 

@@ -16,12 +16,11 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-build-classic": "^36.0.1",
+        "@ckeditor/ckeditor5-vue": "^4.0.1",
         "@vitejs/plugin-vue": "^4.0.0",
-        "ag-grid-community": "^29.0.0",
-        "ag-grid-enterprise": "^29.0.0",
-        "ag-grid-vue3": "^29.0.0",
+        "@vueup/vue-quill": "^1.1.0",
         "flowbite": "^1.6.3",
-        "mavon-editor": "3.0.0-beta",
         "vue": "^3.2.36",
         "vue-good-table-next": "^0.2.1",
         "vue-loader": "^17.0.1",

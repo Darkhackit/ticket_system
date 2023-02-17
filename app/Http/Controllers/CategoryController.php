@@ -13,7 +13,7 @@ class CategoryController extends Controller
             return [
                 'id' => $category->id,
                 'name' => $category->name,
-                'ticket_raised' => 0
+                'ticket_raised' => $category->tickets->count()
             ];
         }));
     }

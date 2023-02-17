@@ -14,7 +14,7 @@ class HelpTopicController extends Controller
                 'id' => $topic->id,
                 'name' => $topic->name,
                 'show_category' => $topic->show_category,
-                'ticket_raised' => 0
+                'ticket_raised' => $topic->tickets->count()
             ];
         }));
     }

@@ -1,11 +1,6 @@
 <script setup>
-import {AgGridVue} from 'ag-grid-vue3'
 import {onMounted,ref} from "vue";
 import {initModals,Modal} from 'flowbite'
-
-import "ag-grid-community/styles/ag-grid.css"
-import "ag-grid-community/styles/ag-theme-alpine.css"
-import 'ag-grid-enterprise'
 import axios from "axios";
 
 const form = ref({
