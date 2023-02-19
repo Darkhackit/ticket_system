@@ -1,5 +1,6 @@
 import {createRouter , createWebHistory} from "vue-router";
-
+import {useAuthStore} from "../store/auth";
+import {computed} from "vue";
 const routes = [
     {
         'path':'/',
@@ -20,6 +21,7 @@ const routes = [
         'path':'/auth/login',
         name:'login',
         component:() => import('../pages/Auth/Login.vue'),
+        meta: { requiresAuth: true }
     },
     {
         'path':'/admin/',
@@ -58,6 +60,17 @@ const routes = [
 const router = createRouter({
     history:createWebHistory(),
     routes
+})
+
+router.beforeEach((to) => {
+    const store = useAuthStore()
+    const token = computed(() => store.authenticated)
+    if(!token.value && to.name !== 'login' && to.name !== 'home') {
+        return {name:'login'}
+    }
+    if (to.meta.requiresAuth && token.value) {
+        return {name:'dashboard'}
+    }
 })
 
 export default router

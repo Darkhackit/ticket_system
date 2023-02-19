@@ -1,8 +1,11 @@
 <script setup>
-import {onMounted,ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {initModals,Modal} from 'flowbite'
+import {useAuthStore} from '../store/auth'
 import axios from "axios";
 
+const store = useAuthStore()
+const token = computed(() => store.authenticated)
 const form = ref({
     name:'',
     show_category:false,

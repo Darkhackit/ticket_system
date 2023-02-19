@@ -21,6 +21,7 @@
         "@vitejs/plugin-vue": "^4.0.0",
         "@vueup/vue-quill": "^1.1.0",
         "flowbite": "^1.6.3",
+        "pinia": "^2.0.30",
         "vue": "^3.2.36",
         "vue-good-table-next": "^0.2.1",
         "vue-loader": "^17.0.1",
