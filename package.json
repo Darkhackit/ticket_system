@@ -26,6 +26,7 @@
         "vue-good-table-next": "^0.2.1",
         "vue-loader": "^17.0.1",
         "vue-router": "^4.0.13",
-        "vue-select": "^4.0.0-beta.6"
+        "vue-select": "^4.0.0-beta.6",
+        "vue3-gravatar": "^3.0.0"
     }
 }

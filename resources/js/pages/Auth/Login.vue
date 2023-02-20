@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {useRouter,RouterLink} from 'vue-router'
 import axios from "axios";
 import {useAuthStore} from "../../store/auth";
@@ -24,6 +24,7 @@ const login = async () => {
        let response = await axios.post('/api/login',form.value)
         window.localStorage.setItem('ticket_auth',JSON.stringify(response.data.authorisation.token))
         window.localStorage.setItem('ticket_user',JSON.stringify(response.data.user))
+        store.authenticated = computed(() => JSON.stringify(response.data.authorisation.token))
         await router.push({name:'dashboard'})
     }catch (e) {
         processing.value = false
