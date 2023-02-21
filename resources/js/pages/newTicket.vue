@@ -1,7 +1,9 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import axios from "axios";
+import { useNotification } from "@kyvg/vue3-notification";
 
+const notification = useNotification()
 
 const form = ref({
     value:'',
@@ -17,8 +19,11 @@ const error = ref([])
 const showMessage = ref(false)
 const showCategory = ref(false)
 const branches = ref([])
+const check_email = ref("")
+const ticket_number = ref("")
 const help_topics = ref([])
 const categories = ref([])
+const errors = ref([])
 const priority = ref([
     'High',
     'medium',
@@ -35,6 +40,10 @@ const getBranches = async () => {
         processing.value = false
         console.log(e.response)
     }
+}
+const clearErrors = (val) => {
+
+    delete errors.value[val]
 }
 const getHelpTopics = async () => {
     try {
@@ -75,6 +84,36 @@ const submitTicket = async () => {
         processing.value = false
     }catch (e) {
         error.value = e.response.data.errors
+        processing.value = false
+    }
+}
+
+const checkStatus = async () => {
+    try {
+        let response = await axios.post(`/api/check_ticket`,{check_email:check_email.value,ticket_number:ticket_number.value})
+        console.log(response)
+        if(response.data.status === 'pending') {
+            notification.notify({
+                title: "Processing",
+                text: "Please your request is been worked on, please check again later",
+            });
+        }
+        if(response.data.status === 'resolved') {
+            notification.notify({
+                type:'success',
+                title: "Resolved",
+                text: "Please your request has been resolved",
+            });
+        }
+        if(response.data.status === 'rejected') {
+            notification.notify({
+                type:'warn',
+                title: "Rejected",
+                text: "Please your request has been rejected , please check your mail for more details",
+            });
+        }
+    }catch (e) {
+        errors.value = e.response.data.errors
         processing.value = false
     }
 }
@@ -146,15 +185,26 @@ onMounted(async () => {
                     <form  class="space-y-6" action="">
                         <div class="flex justify-between">
                             <div>
-                                <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="search issues" >
                             </div>
                             <div>
-                                <h5 class="text-xl font-medium text-gray-900 dark:text-white">Related Issues</h5>
+                                <h5 class="text-xl font-medium text-gray-900 dark:text-white">Check Ticket Status</h5>
                             </div>
                         </div>
 
                     </form>
+                    <div class="mb-4">
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                        <input type="email" v-model="check_email" @input="clearErrors('check_email')" :class="{'border-red-600':errors.check_email}" :readonly="processing" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Email" >
+                        <p class="text-red-600" v-if="errors.check_email" >{{errors.check_email[0]}}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ticket Number</label>
+                        <input type="number" v-model="ticket_number" @input="clearErrors('ticket_number')" :class="{'border-red-600':errors.ticket_number}" :readonly="processing" id="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Ticket Number (Exclude the # sign)" >
+                        <p class="text-red-600" v-if="errors.ticket_number" >{{errors.ticket_number[0]}}</p>
+                    </div>
+                    <button @click.prevent="checkStatus" :class="{'cursor-not-allowed':processing}" :disabled="processing" type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Check Status</button>
                 </div>
+
 
             </div>
 

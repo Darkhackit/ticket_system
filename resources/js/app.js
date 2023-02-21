@@ -9,6 +9,7 @@ import App from './App.vue'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import VueGoodTablePlugin from 'vue-good-table-next';
+import Notifications from '@kyvg/vue3-notification'
 import 'vue-select/dist/vue-select.css';
 import 'vue-good-table-next/dist/vue-good-table-next.css'
 
@@ -20,6 +21,7 @@ let app = createApp(App)
     app.use(router)
     app.use(VueGravatar)
     app.use(VueGoodTablePlugin)
+    app.use(Notifications)
     app.component('QuillEditor', QuillEditor)
     app.component('v-select',vSelect)
     app.mount('#app')

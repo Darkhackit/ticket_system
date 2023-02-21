@@ -6,6 +6,10 @@ import axios from "axios";
 
 const store = useAuthStore()
 const token = computed(() => store.authenticated)
+const pending = ref(0)
+const resolved = ref(0)
+const rejected = ref(0)
+const total = ref(0)
 const form = ref({
     name:'',
     show_category:false,
@@ -57,14 +61,18 @@ const clearErrors = () => {
 const get = async () => {
     try {
         let response = await axios.get('/api/get-ticket')
-        rows.value = (await response.data)
+        rows.value = (await response.data.tickets)
+        pending.value = (await response.data.pending)
+        total.value = (await response.data.total)
+        rejected.value = (await response.data.rejected)
+        resolved.value = (await response.data.resolved)
     }catch (e) {
         console.log(e.response)
     }
 }
 const showEdit = async (id) => {
     try {
-        let response = await axios.get(`/api/get_ticket/${id}`)
+        let response = await axios.get(`/api/get-ticket/${id}`)
         console.log(response)
         ed_form.value.name = (await response.data.name)
         ed_form.value.show_category = (await response.data.show_category)
@@ -108,29 +116,29 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="flex justify-center pb-4 gap-x-2">
+    <div class="grid grid-cols-4 justify-center pb-4 gap-x-2">
         <div>
-            <a href="#" class="block w-56 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-blue-900 dark:text-blue-500">Pending Tickets</h5>
-                <p class="font-normal text-gray-700 dark:text-gray-400">30 </p>
-            </a>
-        </div>
-        <div>
-            <a href="#" class="block w-64 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Resolved Tickets</h5>
-                <p class="font-normal text-gray-700 dark:text-gray-400">Here </p>
+            <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-blue-900 dark:text-blue-500">{{ total }}</h5>
+                <p class="font-normal text-gray-700 dark:text-gray-400">Total Tickets </p>
             </a>
         </div>
         <div>
             <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Rejected Tickets</h5>
-                <p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ resolved }}</h5>
+                <p class="font-normal text-gray-700 dark:text-gray-400">Resolved Tickets </p>
             </a>
         </div>
         <div>
             <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy</h5>
-                <p class="font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ rejected }}</h5>
+                <p class="font-normal text-gray-700 dark:text-gray-400">Rejected Tickets</p>
+            </a>
+        </div>
+        <div>
+            <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ pending }}</h5>
+                <p class="font-normal text-gray-700 dark:text-gray-400">Pending Tickets</p>
             </a>
         </div>
     </div>

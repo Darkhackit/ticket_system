@@ -43,3 +43,4 @@ Route::post('/add-ticket/',[\App\Http\Controllers\TicketController::class,'creat
 Route::get('/get-ticket/',[\App\Http\Controllers\TicketController::class,'index']);
 Route::get('/get-ticket/{ticket}',[\App\Http\Controllers\TicketController::class,'show']);
 Route::get('/get_pending/',[\App\Http\Controllers\TicketController::class,'getPendingTicket']);
+Route::post('/check_ticket/',[\App\Http\Controllers\TicketController::class,'check_ticket']);

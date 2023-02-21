@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ReceivedTicketMail;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
     public function index()
     {
-        return response()->json(Ticket::orderBy('created_at','desc')->get()->map(function ($ticket) {
+        $pending = Ticket::where('status','pending')->count();
+        $resolved = Ticket::where('status','resolved')->count();
+        $rejected = Ticket::where('status','rejected')->count();
+        $total = Ticket::count();
+        return response()->json(['tickets' => Ticket::orderBy('updated_at','desc')->get()->map(function ($ticket) {
             return [
                 'id' => $ticket->id,
                 'ticket_number' => $ticket->ticket_number,
@@ -19,9 +25,9 @@ class TicketController extends Controller
                 'status' => $ticket->status
 
             ];
-        })) ;
+        }),'pending' => $pending,'resolved' => $resolved,'rejected' => $rejected,'total' => $total]) ;
     }
-    public function create(Request $request)
+    public function create(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->validate($request,[
             'value' => ['required'],
@@ -44,9 +50,11 @@ class TicketController extends Controller
 
        $ticket->save();
 
+       Mail::to($request->email)->send(new ReceivedTicketMail($ticket));
+
        return response()->json($ticket);
     }
-    public function show(Ticket $ticket)
+    public function show(Ticket $ticket): \Illuminate\Http\JsonResponse
     {
         return response()->json([
             'id' => $ticket->id,
@@ -61,8 +69,30 @@ class TicketController extends Controller
         ]);
     }
 
-    public function getPendingTicket()
+    public function getPendingTicket(): \Illuminate\Http\JsonResponse
     {
         return response()->json(Ticket::query()->where('status','=','pending')->count());
+    }
+    public function check_ticket(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $this->validate($request,[
+            'check_email' => ['required'],
+            'ticket_number' => ['required','exists:tickets'],
+        ]);
+        $checkEmail = Ticket::where('email',$request->check_email)->first();
+        if(!$checkEmail) {
+            return response()->json(['errors' => [
+                'check_email' => ['The select email do not exist ']
+            ]],422);
+        }
+        $passCheck = Ticket::where(['email' => $request->check_email,'ticket_number' => $request->ticket_number ])->first();
+
+        if(!$passCheck) {
+            return response()->json(['errors' => [
+                'check_email' => ['The select email do not correspond with the selected ticket number ']
+            ]],422);
+        }
+
+        return response()->json($passCheck);
     }
 }
