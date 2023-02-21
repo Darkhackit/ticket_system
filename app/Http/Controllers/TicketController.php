@@ -60,6 +60,7 @@ class TicketController extends Controller
             'id' => $ticket->id,
             'ticket_number' => $ticket->ticket_number,
             'email' => $ticket->email,
+            'title' => $ticket->title,
             'message' => $ticket->message,
             'status' => $ticket->status,
             'branch' => $ticket->branch->name,

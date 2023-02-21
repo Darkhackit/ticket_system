@@ -82,6 +82,11 @@ const submitTicket = async () => {
         processing.value = true
         await axios.post('/api/add-ticket',form.value)
         processing.value = false
+        notification.notify({
+            type:'success',
+            title: "Request Sent Successfully",
+            text: "Ticket Opened Successfully",
+        });
     }catch (e) {
         error.value = e.response.data.errors
         processing.value = false

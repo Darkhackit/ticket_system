@@ -54,6 +54,18 @@ const columns = ref([
 ])
 const rows = ref([])
 
+const ticket = ref({
+    ticket_number : 0,
+    email : "",
+    branch: "",
+    help_topic:"",
+    category:"",
+    priority:"",
+    title:"",
+    message:"",
+
+})
+
 const clearErrors = () => {
     errors.value = []
 }
@@ -74,7 +86,14 @@ const showEdit = async (id) => {
     try {
         let response = await axios.get(`/api/get-ticket/${id}`)
         console.log(response)
-        ed_form.value.name = (await response.data.name)
+        ticket.value.title = (await response.data.title)
+        ticket.value.ticket_number = (await response.data.ticket_number)
+        ticket.value.email = (await response.data.email)
+        ticket.value.branch = (await response.data.branch)
+        ticket.value.help_topic = (await response.data.help_topic)
+        ticket.value.category = (await response.data.category)
+        ticket.value.priority = (await response.data.priority)
+        ticket.value.message = (await response.data.message)
         ed_form.value.show_category = (await response.data.show_category)
         ed_form.value.id = (await response.data.id)
         let el = document.getElementById('large-modal')
@@ -149,7 +168,7 @@ onMounted(async () => {
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-                        Extra Large modal
+                        #{{ticket.ticket_number}}
                     </h3>
                     <div>
                         <select id="large" class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -161,7 +180,38 @@ onMounted(async () => {
                         </select>                    </div>
                 </div>
                 <!-- Modal body -->
-                <div class="p-6 space-y-6">
+                <div class="p-6 space-y-6 h-96">
+
+                    <form>
+                        <div class="grid gap-6 mb-6 md:grid-cols-3">
+                            <div>
+                                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Branch</label>
+                                <input type="text" readonly v-model="ticket.branch"  id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required>
+                            </div>
+                            <div>
+                                <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Help Topic</label>
+                                <input readonly type="text" id="last_name" v-model="ticket.help_topic" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Doe" required>
+                            </div>
+                            <div>
+                                <label for="company" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Priority</label>
+                                <input type="text" v-model="ticket.priority" id="company" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Flowbite" required>
+                            </div>
+                            <div>
+                                <label for="phone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+                                <input type="tel" readonly v-model="ticket.category" id="phone" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="123-45-678" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required>
+                            </div>
+                            <div>
+                                <label for="website" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                                <input type="email" v-model="ticket.email" id="website" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="flowbite.com" required>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <h1 class="mb-4 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-4xl underline dark:text-white">{{ticket.title}}</h1>
+                            <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400" v-html="ticket.message"></p>
+                        </div>
+
+                    </form>
 
                 </div>
                 <!-- Modal footer -->
