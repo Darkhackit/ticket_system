@@ -190,7 +190,7 @@ onMounted(async () => {
             </div>
 
             </div>
-            <div class=" w-full block md:block md:w-2/5 px-5 py-5 md:py-0 border-l " :class="{'hidden':!modalState,'h-screen bg-white absolute top-0 left-0 md:static md:h-full':modalState}">
+            <div class=" w-full block md:block md:w-2/5 px-5 py-5 md:py-0 border-l " :class="{'hidden':!modalState,'h-screen bg-white fixed z-20 top-0 left-0 md:static md:h-full':modalState}">
                 <div class="p-6 bg-white sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
                     <form  class="space-y-6" action="">
                         <div class="flex justify-end"><button v-if="modalState" type="button" class="bg-red-600 text-white inline p-1 rounded-md text-sm" @click="toggleModal()">Close</button></div>
