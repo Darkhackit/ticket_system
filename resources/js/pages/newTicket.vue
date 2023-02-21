@@ -20,7 +20,6 @@ const error = ref([])
 const showMessage = ref(false)
 const showCategory = ref(false)
 const branches = ref([])
-const check_email = ref("")
 const ticket_number = ref("")
 const help_topics = ref([])
 const categories = ref([])
@@ -102,7 +101,7 @@ const submitTicket = async () => {
 
 const checkStatus = async () => {
     try {
-        let response = await axios.post(`/api/check_ticket`,{check_email:check_email.value,ticket_number:ticket_number.value})
+        let response = await axios.post(`/api/check_ticket`,{ticket_number:ticket_number.value})
         console.log(response)
         if(response.data.status === 'pending') {
             notification.notify({
@@ -196,7 +195,7 @@ onMounted(async () => {
                     <form  class="space-y-6" action="">
                         <div class="flex justify-end"><button v-if="modalState" type="button" class="bg-red-600 text-white inline p-1 rounded-md text-sm" @click="toggleModal()">Close</button></div>
                         <div class="flex md:justify-end ">
-                            
+
                             <div class="space-y-3 mb-10">
                                 <h5 class="text-2xl font-medium text-gray-900 dark:text-white font-bold md:text-right">Check Ticket Status</h5>
                                 <p class="text-sm text-gray-500 md:text-right">Track the status of you ticket</p>
@@ -204,11 +203,6 @@ onMounted(async () => {
                         </div>
 
                     </form>
-                    <div class="mb-4">
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                        <input type="email" v-model="check_email" @input="clearErrors('check_email')" :class="{'border-red-600':errors.check_email}" :readonly="processing" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Email" >
-                        <p class="text-red-600" v-if="errors.check_email" >{{errors.check_email[0]}}</p>
-                    </div>
                     <div class="mb-4">
                         <label for="number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ticket Number</label>
                         <input type="number" v-model="ticket_number" @input="clearErrors('ticket_number')" :class="{'border-red-600':errors.ticket_number}" :readonly="processing" id="number" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="Ticket Number (Exclude the # sign)" >

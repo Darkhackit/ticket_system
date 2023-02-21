@@ -77,20 +77,13 @@ class TicketController extends Controller
     public function check_ticket(Request $request): \Illuminate\Http\JsonResponse
     {
         $this->validate($request,[
-            'check_email' => ['required'],
             'ticket_number' => ['required','exists:tickets'],
         ]);
-        $checkEmail = Ticket::where('email',$request->check_email)->first();
-        if(!$checkEmail) {
-            return response()->json(['errors' => [
-                'check_email' => ['The select email do not exist ']
-            ]],422);
-        }
-        $passCheck = Ticket::where(['email' => $request->check_email,'ticket_number' => $request->ticket_number ])->first();
+        $passCheck = Ticket::where(['ticket_number' => $request->ticket_number ])->first();
 
         if(!$passCheck) {
             return response()->json(['errors' => [
-                'check_email' => ['The select email do not correspond with the selected ticket number ']
+                'ticket_number' => ['The select email do not correspond with the selected ticket number ']
             ]],422);
         }
 
