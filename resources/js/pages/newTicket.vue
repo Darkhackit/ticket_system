@@ -2,7 +2,6 @@
 import {onMounted, ref} from "vue";
 import axios from "axios";
 import { useNotification } from "@kyvg/vue3-notification";
-import Navbar from "../../components/navbar.vue";
 
 const notification = useNotification()
 

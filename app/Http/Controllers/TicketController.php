@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AutoRespond;
 use App\Mail\ReceivedTicketMail;
+use App\Mail\ReplyTicket;
+use App\Models\Branch;
+use App\Models\Category;
+use App\Models\HelpTopic;
 use App\Models\Ticket;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -51,6 +57,7 @@ class TicketController extends Controller
        $ticket->save();
 
        Mail::to($request->email)->send(new ReceivedTicketMail($ticket));
+       Mail::to("tech@primeinsuranceghana.com")->send(new AutoRespond($ticket));
 
        return response()->json($ticket);
     }
@@ -66,7 +73,8 @@ class TicketController extends Controller
             'branch' => $ticket->branch->name,
             'category' => $ticket->category->name,
             'priority' => $ticket->priority,
-            'help_topic' => $ticket->help_topic->name
+            'help_topic' => $ticket->help_topic->name,
+            'status' => $ticket->status
         ]);
     }
 
@@ -88,5 +96,60 @@ class TicketController extends Controller
         }
 
         return response()->json($passCheck);
+    }
+
+    public function reply_ticket(Request $request)
+    {
+        $this->validate($request,[
+            'reply' => ['required']
+        ]);
+
+        $ticket = Ticket::where('ticket_number',$request->ticket_number)->first();
+        $ticket->status = $request->status;
+        $ticket->priority = $request->priority;
+        $ticket->update();
+
+        $data = $request->all();
+
+        Mail::to($request->email)->send(new ReplyTicket($data));
+
+
+    }
+    public function get_branches_report(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $model = '';
+
+        if($request->model === "" || $request->model == 'branch') {
+            $model = '\App\Models\Branch';
+        }elseif ($request->model == 'category') {
+             $model = '\App\Models\Category';
+        }elseif ($request->model == 'help_topic' ) {
+            $model = '\App\Models\HelpTopic';
+        }else {
+            $model = '\App\Models\Branch';
+        }
+        $s = Carbon::createFromFormat('Y-m-d', $request->s ? $request->s : Carbon::now()->format('Y-m-01'))->startOfDay();
+        $e = Carbon::createFromFormat('Y-m-d', $request->e ? $request->e : Carbon::now()->format('Y-m-t'))->endOfDay();
+
+        $branchesCount = $model::query()->orderBy('created_at')->get()->map(function ($t) use ($s,$e) {
+           return $t->tickets->whereBetween('created_at',[$s , $e])->count();
+        });
+        $branch = Branch::query()->count();
+        $ticket = Ticket::query()->count();
+        $help_topics = HelpTopic::query()->count();
+        $category = Category::query()->count();
+
+        $branchNames = $model::orderBy('created_at')->pluck('name');
+
+        return response()->json([
+            'count' => $branchesCount,
+            'branch_names' => $branchNames,
+            'branch' => $branch,
+            'category' => $category,
+            'ticket' => $ticket,
+            'help_topic' => $help_topics,
+            'e' => $e,
+            's' => $s
+        ]);
     }
 }

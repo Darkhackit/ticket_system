@@ -24,7 +24,7 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
-        'path':'/admin/',
+        'path':'/tellmesomethingsweet/admin/',
         component:() => import('../Layout/AdminLayout.vue'),
         children:[
             {

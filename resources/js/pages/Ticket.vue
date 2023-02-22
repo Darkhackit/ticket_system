@@ -19,6 +19,11 @@ const ed_form = ref({
     show_category:false,
     id:''
 })
+const priorities = ref([
+    'pending',
+    'resolved',
+    'rejected'
+])
 const errors = ref([])
 const columns = ref([
     {   label: 'ID',
@@ -63,6 +68,8 @@ const ticket = ref({
     priority:"",
     title:"",
     message:"",
+    status:'',
+    reply:''
 
 })
 
@@ -94,6 +101,7 @@ const showEdit = async (id) => {
         ticket.value.category = (await response.data.category)
         ticket.value.priority = (await response.data.priority)
         ticket.value.message = (await response.data.message)
+        ticket.value.status = (await response.data.status)
         ed_form.value.show_category = (await response.data.show_category)
         ed_form.value.id = (await response.data.id)
         let el = document.getElementById('large-modal')
@@ -107,6 +115,14 @@ const showEdit = async (id) => {
         console.log(e.response)
     }
 
+}
+const replyTicket = async () => {
+    try {
+        let response = await axios.post('/api/reply_ticket',ticket.value)
+        console.log(response)
+    }catch (e) {
+        alert(e.response)
+    }
 }
 const closeEdit = () => {
     let el = document.getElementById('large-modal')
@@ -171,16 +187,13 @@ onMounted(async () => {
                         #{{ticket.ticket_number}}
                     </h3>
                     <div>
-                        <select id="large" class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option selected>Choose a country</option>
-                            <option value="US">United States</option>
-                            <option value="CA">Canada</option>
-                            <option value="FR">France</option>
-                            <option value="DE">Germany</option>
-                        </select>                    </div>
+                        <select id="large" v-model="ticket.status" class="block w-full px-4 py-3 text-base text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option v-for="priority in priorities" :value="priority" >{{priority}}</option>
+                        </select>
+                    </div>
                 </div>
                 <!-- Modal body -->
-                <div class="p-6 space-y-6 h-96">
+                <div class="p-6 space-y-6 ">
 
                     <form>
                         <div class="grid gap-6 mb-6 md:grid-cols-3">
@@ -211,13 +224,18 @@ onMounted(async () => {
                             <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400" v-html="ticket.message"></p>
                         </div>
 
+                        <div class="space-y-2">
+                            <label for="title" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Reply</label>
+                            <quill-editor contentType="html" v-model:content="ticket.reply" theme="snow"></quill-editor>
+                            <p class="text-red-600 text-sm"  ></p>
+                        </div>
+
                     </form>
 
                 </div>
                 <!-- Modal footer -->
-                <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button data-modal-hide="extralarge-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">I accept</button>
-                    <button data-modal-hide="extralarge-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">Decline</button>
+                <div class="flex justify-end p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
+                    <button @click.prevent="replyTicket" data-modal-hide="extralarge-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Reply</button>
                 </div>
             </div>
         </div>

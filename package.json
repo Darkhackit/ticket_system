@@ -21,6 +21,7 @@
         "@kyvg/vue3-notification": "^2.9.0",
         "@vitejs/plugin-vue": "^4.0.0",
         "@vueup/vue-quill": "^1.1.0",
+        "apexcharts": "^3.37.0",
         "flowbite": "^1.6.3",
         "pinia": "^2.0.30",
         "vue": "^3.2.36",
@@ -28,6 +29,7 @@
         "vue-loader": "^17.0.1",
         "vue-router": "^4.0.13",
         "vue-select": "^4.0.0-beta.6",
+        "vue3-apexcharts": "^1.4.1",
         "vue3-gravatar": "^3.0.0"
     }
 }
