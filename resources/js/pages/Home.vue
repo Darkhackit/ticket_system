@@ -7,7 +7,7 @@ const ticket = ref(0)
 const help_topics = ref(0)
 const category = ref(0)
 const form = ref({
-    model:'',
+    model:'branch',
     e:'',
     s:''
 })

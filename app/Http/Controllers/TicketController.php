@@ -131,7 +131,7 @@ class TicketController extends Controller
         $s = Carbon::createFromFormat('Y-m-d', $request->s ? $request->s : Carbon::now()->format('Y-m-01'))->startOfDay();
         $e = Carbon::createFromFormat('Y-m-d', $request->e ? $request->e : Carbon::now()->format('Y-m-t'))->endOfDay();
 
-        $branchesCount = $model::query()->orderBy('created_at')->get()->map(function ($t) use ($s,$e) {
+        $branchesCount = $model::query()->orderBy('created_at','desc')->get()->map(function ($t) use ($s,$e) {
            return $t->tickets->whereBetween('created_at',[$s , $e])->count();
         });
         $branch = Branch::query()->count();
@@ -139,7 +139,7 @@ class TicketController extends Controller
         $help_topics = HelpTopic::query()->count();
         $category = Category::query()->count();
 
-        $branchNames = $model::orderBy('created_at')->pluck('name');
+        $branchNames = $model::orderBy('created_at','desc')->pluck('name');
 
         return response()->json([
             'count' => $branchesCount,
@@ -151,5 +151,46 @@ class TicketController extends Controller
             'e' => $e,
             's' => $s
         ]);
+    }
+
+    public function report(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $model = '';
+
+        if($request->model === "" || $request->model == 'branch') {
+            $model = '\App\Models\Branch';
+        }elseif ($request->model == 'category') {
+            $model = '\App\Models\Category';
+        }elseif ($request->model == 'help_topic' ) {
+            $model = '\App\Models\HelpTopic';
+        }else {
+            $model = '\App\Models\Branch';
+        }
+        $s = Carbon::createFromFormat('Y-m-d', $request->s ? $request->s : Carbon::now()->format('Y-m-01'))->startOfDay();
+        $e = Carbon::createFromFormat('Y-m-d', $request->e ? $request->e : Carbon::now()->format('Y-m-t'))->endOfDay();
+        $pending = Ticket::whereBetween('created_at',[$s,$e])->where('status','pending')->count();
+        $resolved = Ticket::whereBetween('created_at',[$s,$e])->where('status','resolved')->count();
+        $rejected = Ticket::whereBetween('created_at',[$s,$e])->where('status','rejected')->count();
+        $total = Ticket::whereBetween('created_at',[$s,$e])->count();
+        $models = $model::query()->orderBy('created_at','desc')->get()->map(function ($m) use ($s,$e) {
+            return [
+                'mode' => "span",
+                'label' => $m->name,
+                'html' => false,
+                'children' => $m->tickets->whereBetween('created_at',[$s , $e])->map(function ($t) {
+                    return [
+                        'id' => $t->id,
+                        'title' => $t->title,
+                        'email' => $t->email,
+                        'ticket_number' => $t->ticket_number,
+                        'branch' => $t->branch->name,
+                        'status' => $t->status,
+                        'priority' => $t->priority
+                    ];
+                })
+            ];
+        });
+
+        return response()->json(['models' => $models,'pending' => $pending,'resolved' => $resolved,'rejected' => $rejected,'total' => $total]);
     }
 }

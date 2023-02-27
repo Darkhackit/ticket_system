@@ -255,7 +255,7 @@ onMounted(async () => {
             <div v-if="props.column.field == 'status'">
                 <span v-if="props.row.status === 'pending'" class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{{props.row.status}}</span>
                 <span  v-if="props.row.status === 'resolved'" class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{ props.row.status }}</span>
-                <span  v-if="props.row.status === 'rejected'" class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">{{ props.row.status }}</span>
+                <span  v-if="props.row.status === 'rejected'" class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-green-300">{{ props.row.status }}</span>
             </div>
             <div v-if="props.column.field == 'ticket_number'">
                 <span @click.prevent="showEdit(props.row.id)" class="cursor-pointer text-blue-600 underline">#{{props.row.ticket_number}}</span>

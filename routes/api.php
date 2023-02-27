@@ -46,3 +46,4 @@ Route::get('/get_pending/',[\App\Http\Controllers\TicketController::class,'getPe
 Route::post('/check_ticket/',[\App\Http\Controllers\TicketController::class,'check_ticket']);
 Route::post('/reply_ticket/',[\App\Http\Controllers\TicketController::class,'reply_ticket']);
 Route::post('/get_branches_report/',[\App\Http\Controllers\TicketController::class,'get_branches_report']);
+Route::post('/report/',[\App\Http\Controllers\TicketController::class,'report']);
