@@ -30,10 +30,10 @@ class ReceivedTicketMail extends Mailable
      *
      * @return \Illuminate\Mail\Mailables\Envelope
      */
-    public function envelope()
+    public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Received Ticket Mail',
+            subject: 'Ticket Received',
         );
     }
 
@@ -42,10 +42,11 @@ class ReceivedTicketMail extends Mailable
      *
      * @return \Illuminate\Mail\Mailables\Content
      */
-    public function content()
+    public function content(): Content
     {
         return new Content(
             markdown: 'emails.receivedTicketMail',
+            with:['ticket' => $this->ticket]
         );
     }
 
@@ -54,7 +55,7 @@ class ReceivedTicketMail extends Mailable
      *
      * @return array
      */
-    public function attachments()
+    public function attachments(): array
     {
         return [];
     }

@@ -92,6 +92,13 @@ const submitTicket = async () => {
             title: "Request Sent Successfully",
             text: "Ticket Opened Successfully",
         });
+        form.value.value = ""
+        form.value.email = ""
+        form.value.category = ""
+        form.value.title = ""
+        form.value.help_topic = ""
+        form.value.priority = ""
+        form.value.branch = ""
     }catch (e) {
         error.value = e.response.data.errors
         processing.value = false
