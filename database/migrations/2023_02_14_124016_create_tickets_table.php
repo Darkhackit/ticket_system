@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->integer('branch_id');
-            $table->integer('category_id');
-            $table->integer('help_topic_id');
+            $table->integer('branch_id')->nullable();
+            $table->integer('category_id')->nullable();
+            $table->integer('help_topic_id')->nullable();
             $table->text('title');
             $table->string('email');
             $table->string('status');

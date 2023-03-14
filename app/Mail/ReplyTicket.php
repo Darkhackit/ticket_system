@@ -33,7 +33,7 @@ class ReplyTicket extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject:"response to ticket number ". $this->ticket['ticket_number'],
+            subject:"Response to ticket number ". $this->ticket['ticket_number'],
         );
     }
 

@@ -119,19 +119,14 @@ const showEdit = async (id) => {
 const replyTicket = async () => {
     try {
         let response = await axios.post('/api/reply_ticket',ticket.value)
-        console.log(response)
+        closeEdit()
     }catch (e) {
         alert(e.response)
     }
 }
 const closeEdit = () => {
-    let el = document.getElementById('large-modal')
-    let modal = new Modal(el,{
-        backdrop: 'static',
-        backdropClasses: 'bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-40',
-        closable: false,
-    })
-    modal.hide()
+    let el = document.getElementById('cl')
+    el.click()
 }
 const deleteEdit = async (params) => {
     if (window.confirm("Are you sure")) {
@@ -152,7 +147,7 @@ onMounted(async () => {
 
 <template>
     <div class="grid grid-cols-4 justify-center pb-4 gap-x-2">
-        <div>
+        <div id="cl">
             <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-blue-900 dark:text-blue-500">{{ total }}</h5>
                 <p class="font-normal text-gray-700 dark:text-gray-400">Total Tickets </p>
