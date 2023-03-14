@@ -100,9 +100,9 @@ class TicketController extends Controller
 
     public function reply_ticket(Request $request)
     {
-        $this->validate($request,[
-            'reply' => ['required']
-        ]);
+//        $this->validate($request,[
+//            'reply' => ['required']
+//        ]);
 
         $ticket = Ticket::where('ticket_number',$request->ticket_number)->first();
         $ticket->status = $request->status;

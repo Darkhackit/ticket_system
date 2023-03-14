@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Ticket;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -18,9 +19,10 @@ class ReplyTicket extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public array $ticket;
+    public function __construct($data)
     {
-        //
+        $this->ticket = $data;
     }
 
     /**
@@ -31,7 +33,7 @@ class ReplyTicket extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Reply Ticket',
+            subject:"response to ticket number ". $this->ticket['ticket_number'],
         );
     }
 
@@ -44,6 +46,7 @@ class ReplyTicket extends Mailable
     {
         return new Content(
             markdown: 'emails.reply_ticket',
+            with: ['ticket' => $this->ticket]
         );
     }
 
