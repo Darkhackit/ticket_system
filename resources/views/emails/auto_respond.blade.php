@@ -1,11 +1,7 @@
 <x-mail::message>
-# Introduction
+# From : {{$ticket->email}}
 
-The body of your message.
-
-<x-mail::button :url="''">
-Button Text
-</x-mail::button>
+    {{$ticket->message }}
 
 Thanks,<br>
 {{ config('app.name') }}

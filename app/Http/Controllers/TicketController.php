@@ -57,7 +57,7 @@ class TicketController extends Controller
        $ticket->save();
 
        Mail::to($request->email)->send(new ReceivedTicketMail($ticket));
-       Mail::to("tech@primeinsuranceghana.com")->send(new AutoRespond($ticket));
+       Mail::to("earthur510@gmail.com")->send(new AutoRespond($ticket));
 
        return response()->json($ticket);
     }

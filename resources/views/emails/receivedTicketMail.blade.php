@@ -5,8 +5,6 @@
     Please you can use the Ticket ID to check the status of your ticket
     If you have any further questions or concerns, please let us know. We are available round-the-clock and always happy to help.
 
-    Take care,
-
-Thanks,<br>
-{{ config('app.name') }}
-</x-mail::message>
+    Thanks,<br>
+    {{ config('app.name') }}
+    </x-mail::message>

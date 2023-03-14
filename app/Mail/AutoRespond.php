@@ -33,7 +33,7 @@ class AutoRespond extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Auto Respond',
+            subject: 'New ticket from '.$this->ticket->branch->name,
         );
     }
 
@@ -46,6 +46,7 @@ class AutoRespond extends Mailable
     {
         return new Content(
             markdown: 'emails.auto_respond',
+            with: ['ticket' => $this->ticket]
         );
     }
 
