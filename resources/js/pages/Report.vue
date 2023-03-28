@@ -1,8 +1,11 @@
 <script setup>
 import {computed, onMounted, ref} from "vue";
-import {initModals,Modal} from 'flowbite'
+import {initModals} from 'flowbite'
+import Papa from 'papaparse'
 import {useAuthStore} from '../store/auth'
 import axios from "axios";
+import {jsPDF} from 'jspdf'
+import "jspdf-autotable"
 
 const store = useAuthStore()
 const token = computed(() => store.authenticated)
@@ -53,6 +56,21 @@ const columns = ref([
 ])
 const rows = ref([])
 
+const column = [
+    {title: "ID", dataKey: "id"},
+    {title: "TICKET NUMBER", dataKey: "ticket_number"},
+    {title: "Email", dataKey: "email"},
+    {title: "TITLE", dataKey: "title"},
+    {title: "PRIORITY", dataKey: "priority"},
+    {title: "STATUS", dataKey: "status"},
+    {title: "RESOLVED BY", dataKey: "resolved_by"},
+];
+const exportPdf = () => {
+    const pdf = new jsPDF("p","pt","A4")
+    pdf.text(`${form.value.model.toUpperCase()} REPORT FROM ${form.value.s ?? new Date().toDateString()} TO ${form.value.e ?? new Date().toDateString() }`,30,20)
+    pdf.autoTable(column,rows.value)
+    pdf.save()
+}
 
 const get = async () => {
     try {
@@ -66,6 +84,19 @@ const get = async () => {
         console.log(e.response)
     }
 }
+const exportCsv = () => {
+    const csv = Papa.unparse(rows.value);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'table.csv');
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 onMounted(async () => {
     initModals();
     await get()
@@ -98,6 +129,15 @@ onMounted(async () => {
                 <p class="font-normal text-gray-700 dark:text-gray-400">Pending Tickets</p>
             </a>
         </div>
+    </div>
+    <div class="flex">
+            <div class="m-2">
+                <button @click.prevent="exportPdf"  type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Export to PDF</button>
+            </div>
+        <div class="m-2">
+            <button @click.prevent="exportCsv"  type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Export to CSV</button>
+        </div>
+
     </div>
     <div class="grid grid-cols-4 gap-x-2">
         <div>

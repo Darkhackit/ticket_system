@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Mail\AutoRespond;
 use App\Mail\ReceivedTicketMail;
 use App\Mail\ReplyTicket;
@@ -12,7 +11,6 @@ use App\Models\Ticket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-
 class TicketController extends Controller
 {
     public function index(): \Illuminate\Http\JsonResponse
@@ -192,7 +190,6 @@ class TicketController extends Controller
                 })
             ];
         });
-
         return response()->json(['models' => $models,'pending' => $pending,'resolved' => $resolved,'rejected' => $rejected,'total' => $total]);
     }
 }
