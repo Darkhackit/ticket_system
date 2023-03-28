@@ -3,7 +3,9 @@ import {computed, onMounted, ref} from "vue";
 import {initModals,Modal} from 'flowbite'
 import {useAuthStore} from '../store/auth'
 import axios from "axios";
+import { useNotification } from "@kyvg/vue3-notification";
 
+const notification = useNotification()
 const store = useAuthStore()
 const token = computed(() => store.authenticated);
 const user = computed(() => store.user)
@@ -121,6 +123,10 @@ const showEdit = async (id) => {
 const replyTicket = async () => {
     try {
         let response = await axios.post('/api/reply_ticket',ticket.value)
+        notification.notify({
+            title: "Success",
+            text: "Ticket Replied",
+        });
         closeEdit()
     }catch (e) {
         alert(e.response)
