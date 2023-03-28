@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Mail;
 
 class TicketController extends Controller
 {
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
         $pending = Ticket::where('status','pending')->count();
         $resolved = Ticket::where('status','resolved')->count();
@@ -107,6 +107,7 @@ class TicketController extends Controller
         $ticket = Ticket::where('ticket_number',$request->ticket_number)->first();
         $ticket->status = $request->status;
         $ticket->priority = $request->priority;
+        $ticket->user_id = $request->user_id;
         $ticket->update();
 
         $data = $request->all();
@@ -185,7 +186,8 @@ class TicketController extends Controller
                         'ticket_number' => $t->ticket_number,
                         'branch' => $t->branch->name,
                         'status' => $t->status,
-                        'priority' => $t->priority
+                        'priority' => $t->priority,
+                        'resolved_by' => $t->user?->name
                     ];
                 })
             ];

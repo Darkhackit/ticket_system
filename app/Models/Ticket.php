@@ -20,4 +20,8 @@ class Ticket extends Model
     {
         return $this->belongsTo(Branch::class);
     }
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

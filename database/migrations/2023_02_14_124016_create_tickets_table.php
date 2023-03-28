@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('priority');
             $table->text('message');
             $table->integer('ticket_number')->nullable();
+            $table->integer('user_id')->nullable();
             $table->timestamps();
         });
     }

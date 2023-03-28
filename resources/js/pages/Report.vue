@@ -43,6 +43,10 @@ const columns = ref([
         field:'status'
     },
     {
+        label: 'Resolved By',
+        field:'resolved_by'
+    },
+    {
         label: 'Action',
         field:'action'
     }

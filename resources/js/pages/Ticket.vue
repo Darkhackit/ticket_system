@@ -5,7 +5,8 @@ import {useAuthStore} from '../store/auth'
 import axios from "axios";
 
 const store = useAuthStore()
-const token = computed(() => store.authenticated)
+const token = computed(() => store.authenticated);
+const user = computed(() => store.user)
 const pending = ref(0)
 const resolved = ref(0)
 const rejected = ref(0)
@@ -69,7 +70,8 @@ const ticket = ref({
     title:"",
     message:"",
     status:'',
-    reply:''
+    reply:'',
+    user_id:user.value.id
 
 })
 
