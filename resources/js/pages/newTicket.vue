@@ -143,7 +143,11 @@ onMounted(async () => {
 
 </script>
 <template>
-    <div class="flex flex-row w-full justify-center py-20">
+    <div class="flex justify-center items-center flex-col w-full py-5 space-y-5">
+        <img src="https://www.primeinsuranceghana.com/img/logo.png" class="w-[200px]" alt="">
+        <div><h1 class="text-2xl font-bold text-red-600">Prime Ticket</h1></div>
+    </div>
+    <div class="flex flex-row w-full justify-center py-10">
         <div class="w-4/5 flex flex-col md:flex-row border bg-white rounded-md py-10">
             <div class=" w-full md:w-4/5 lg:w-4/5 px-10">
             <div class="  bg-white  sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
@@ -221,6 +225,9 @@ onMounted(async () => {
             </div>
 
         </div>
+    </div>
+    <div class="text-center text-sm">
+        <p>Prime Insurance Company LTD.</p>
     </div>
 </template>
 
