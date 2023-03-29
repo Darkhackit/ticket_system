@@ -192,4 +192,25 @@ class TicketController extends Controller
         });
         return response()->json(['models' => $models,'pending' => $pending,'resolved' => $resolved,'rejected' => $rejected,'total' => $total]);
     }
+    public function print(Request $request)
+    {
+        $s = Carbon::createFromFormat('Y-m-d', $request->s ? $request->s : Carbon::now()->format('Y-m-01'))->startOfDay();
+        $e = Carbon::createFromFormat('Y-m-d', $request->e ? $request->e : Carbon::now()->format('Y-m-t'))->endOfDay();
+
+        $tickets = Ticket::whereBetween('created_at',[$s,$e])->get()->sortBy(function ($q) {
+            return $q->branch->id;
+        })->map(function ($t) {
+            return [
+                'id' => $t->id,
+                'ticket_number' => $t->ticket_number,
+                'branch' => $t->branch->name,
+                'email' => $t->email,
+                'title' => $t->title,
+                'priority' => $t->priority,
+                'status' => $t->status,
+                'resolved_by' => $t->user?->name
+            ];
+        });
+        return response()->json($tickets);
+    }
 }

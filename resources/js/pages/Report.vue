@@ -59,17 +59,23 @@ const rows = ref([])
 const column = [
     {title: "ID", dataKey: "id"},
     {title: "TICKET NUMBER", dataKey: "ticket_number"},
-    {title: "Email", dataKey: "email"},
+    {title: "BRANCH", dataKey: "branch"},
+    {title: "EMAIL", dataKey: "email"},
     {title: "TITLE", dataKey: "title"},
     {title: "PRIORITY", dataKey: "priority"},
     {title: "STATUS", dataKey: "status"},
     {title: "RESOLVED BY", dataKey: "resolved_by"},
 ];
-const exportPdf = () => {
-    const pdf = new jsPDF("p","pt","A4")
-    pdf.text(`${form.value.model.toUpperCase()} REPORT FROM ${form.value.s ?? new Date().toDateString()} TO ${form.value.e ?? new Date().toDateString() }`,30,20)
-    pdf.autoTable(column,rows.value)
-    pdf.save()
+const exportPdf = async () => {
+    try {
+        let response = await axios.post(`/api/print`,form.value)
+        const pdf = new jsPDF("p","pt","A2")
+        pdf.autoTable(column,response.data)
+        pdf.save()
+    }catch (e) {
+
+    }
+
 }
 
 const get = async () => {
@@ -84,8 +90,9 @@ const get = async () => {
         console.log(e.response)
     }
 }
-const exportCsv = () => {
-    const csv = Papa.unparse(rows.value);
+const exportCsv = async () => {
+    let response = await axios.post(`/api/print`,form.value)
+    const csv = Papa.unparse(response.data);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
