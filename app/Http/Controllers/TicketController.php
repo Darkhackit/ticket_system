@@ -49,13 +49,13 @@ class TicketController extends Controller
        $ticket->email = $request->email;
        $ticket->status = 'pending';
        $ticket->priority = $request->priority;
-       $ticket->message = $request->value;
+       $ticket->message = htmlspecialchars($request->value);
        $ticket->ticket_number = mt_rand();
 
        $ticket->save();
 
        Mail::to($request->email)->send(new ReceivedTicketMail($ticket));
-       Mail::to("it@primeinsuranceghana.com")->send(new AutoRespond($ticket));
+       Mail::to("earthur510@gmail.com")->send(new AutoRespond($ticket));
 
        return response()->json($ticket);
     }

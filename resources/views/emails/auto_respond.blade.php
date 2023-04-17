@@ -1,7 +1,7 @@
 <x-mail::message>
 # From : {{$ticket->email}}
 
-    {{$ticket->message }}
+    {{ $ticket->message }}
 
 Thanks,<br>
 {{ config('app.name') }}
