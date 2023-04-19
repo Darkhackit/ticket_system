@@ -43,7 +43,7 @@ class TicketController extends Controller
         ]);
        $ticket = new Ticket();
        $ticket->branch_id = $request->branch['id'];
-       $ticket->category_id = $request->category['id'];
+       $ticket->category_id = $request->category['id'] ?? "";
        $ticket->help_topic_id = $request->help_topic['id'];
        $ticket->title = $request->title;
        $ticket->email = $request->email;
