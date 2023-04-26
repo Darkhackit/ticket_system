@@ -30,6 +30,8 @@ const priority = ref([
     'low'
 ])
 
+const ticket_status=ref('');
+
 const modalState = ref(false);
 
 const toggleModal = ()=>{
@@ -50,6 +52,7 @@ const getBranches = async () => {
 const clearErrors = (val) => {
 
     delete errors.value[val]
+    ticket_status.value = ''
 }
 const getHelpTopics = async () => {
     try {
@@ -117,6 +120,11 @@ const checkStatus = async () => {
                 title: "Processing",
                 text: "Please your request is been worked on, please check again later",
             });
+            ticket_status.value = {
+                color:'blue',
+                title: "Processing",
+                text: "Please your request is been worked on, please check again later",
+            }
         }
         if(response.data.status === 'resolved') {
             notification.notify({
@@ -124,6 +132,12 @@ const checkStatus = async () => {
                 title: "Resolved",
                 text: "Please your request has been resolved",
             });
+            ticket_status.value={
+                color:'green',
+                title: "Resolved",
+                text: "Please your request has been resolved",
+            }
+            
         }
         if(response.data.status === 'rejected') {
             notification.notify({
@@ -131,6 +145,11 @@ const checkStatus = async () => {
                 title: "Rejected",
                 text: "Please your request has been rejected , please check your mail for more details",
             });
+            ticket_status.value= {
+                color:'red',
+                title: "Rejected",
+                text: "Please your request has been rejected , please check your mail for more details",
+            }
         }
     }catch (e) {
         errors.value = e.response.data.errors
@@ -234,6 +253,17 @@ onMounted(async () => {
                         </svg>
                         Check Status
                     </button>
+
+                    <div v-if="ticket_status" class="space-y-2 mt-10">
+                        <p class="text-xs">Results</p>
+                       <div class="bg-gray-50 p-5  space-y-3 rounded-md border">
+                        <div class="flex">
+                            <span :class="'bg-'+ticket_status.color+'-500'" class="block w-[5px] mr-2"></span>
+                            <p  class="text-sm font-bold">#{{ ticket_number }} - {{ ticket_status.title }}</p>
+                        </div>
+                        <p class="ml-2">{{ ticket_status.text }}</p>
+                       </div>
+                    </div>
                 </div>
 
 
