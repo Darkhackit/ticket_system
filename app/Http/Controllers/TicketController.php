@@ -7,6 +7,7 @@ use App\Mail\ReplyTicket;
 use App\Models\Branch;
 use App\Models\Category;
 use App\Models\HelpTopic;
+use App\Models\Image;
 use App\Models\Ticket;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -26,7 +27,8 @@ class TicketController extends Controller
                 'branch' => $ticket->branch->name,
                 'email' => $ticket->email,
                 'priority' => $ticket->priority,
-                'status' => $ticket->status
+                'status' => $ticket->status,
+                'file' => $ticket->images->first()?->url
 
             ];
         }),'pending' => $pending,'resolved' => $resolved,'rejected' => $rejected,'total' => $total]) ;
@@ -42,20 +44,33 @@ class TicketController extends Controller
             'title' => ['required']
         ]);
        $ticket = new Ticket();
-       $ticket->branch_id = $request->branch['id'];
-       $ticket->category_id = $request->category['id'] ?? "";
-       $ticket->help_topic_id = $request->help_topic['id'];
+       $ticket->branch_id = $request->branch ?? "";
+       $ticket->category_id = $request->category ?? "";
+       $ticket->help_topic_id = $request->help_topic ?? "";
        $ticket->title = $request->title;
        $ticket->email = $request->email;
        $ticket->status = 'pending';
        $ticket->priority = $request->priority;
        $ticket->message = htmlspecialchars($request->value);
-       $ticket->ticket_number = mt_rand();
-
+       $ticket->ticket_number = mt_rand(10000,99999);
        $ticket->save();
+        if($request->hasFile('ticket_files')) {
+            $image = $request->file('ticket_files');
+            $filename = time().'.'.$image->getClientOriginalExtension();
+
+            $image->move(public_path('files'),$filename);
+
+            $path = url('').'/files/' . $filename;
+
+            $newFile = new Image();
+            $newFile->ticket_id = $ticket->id;
+            $newFile->url = $path;
+            $newFile->save();
+
+        }
 
        Mail::to($request->email)->send(new ReceivedTicketMail($ticket));
-       Mail::to("earthur510@gmail.com")->send(new AutoRespond($ticket));
+       Mail::to("tech@primeinsuranceghana.com")->send(new AutoRespond($ticket));
 
        return response()->json($ticket);
     }
@@ -69,10 +84,11 @@ class TicketController extends Controller
             'message' => $ticket->message,
             'status' => $ticket->status,
             'branch' => $ticket->branch->name,
-            'category' => $ticket->category->name,
+            'category' => $ticket->category?->name,
             'priority' => $ticket->priority,
             'help_topic' => $ticket->help_topic->name,
-            'status' => $ticket->status
+            'status' => $ticket->status,
+            'file' => $ticket->images->first()?->url
         ]);
     }
 

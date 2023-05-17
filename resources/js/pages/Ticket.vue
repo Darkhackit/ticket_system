@@ -66,6 +66,7 @@ const ticket = ref({
     ticket_number : 0,
     email : "",
     branch: "",
+    url:'',
     help_topic:"",
     category:"",
     priority:"",
@@ -101,6 +102,7 @@ const showEdit = async (id) => {
         ticket.value.ticket_number = (await response.data.ticket_number)
         ticket.value.email = (await response.data.email)
         ticket.value.branch = (await response.data.branch)
+        ticket.value.url = (await response.data.file)
         ticket.value.help_topic = (await response.data.help_topic)
         ticket.value.category = (await response.data.category)
         ticket.value.priority = (await response.data.priority)
@@ -225,6 +227,10 @@ onMounted(async () => {
                         <div class="text-center">
                             <h1 class="mb-4 text-xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-4xl underline dark:text-white">{{ticket.title}}</h1>
                             <p class="mb-6 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400" v-html="ticket.message"></p>
+                            <div v-if="ticket.url">
+                                <h1>Attached Files</h1>
+                                <a :href="ticket.url" target="_blank">File</a>
+                            </div>
                         </div>
 
                         <div class="space-y-2">
