@@ -42,6 +42,7 @@ Route::delete('/category/{category}',[\App\Http\Controllers\CategoryController::
 Route::post('/add-ticket/',[\App\Http\Controllers\TicketController::class,'create']);
 Route::get('/get-ticket/',[\App\Http\Controllers\TicketController::class,'index']);
 Route::get('/get-ticket/{ticket}',[\App\Http\Controllers\TicketController::class,'show']);
+Route::delete('/get-ticket/{ticket}',[\App\Http\Controllers\TicketController::class,'delete']);
 Route::get('/get_pending/',[\App\Http\Controllers\TicketController::class,'getPendingTicket']);
 Route::post('/check_ticket/',[\App\Http\Controllers\TicketController::class,'check_ticket']);
 Route::post('/reply_ticket/',[\App\Http\Controllers\TicketController::class,'reply_ticket']);

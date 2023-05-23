@@ -9,6 +9,7 @@ const notification = useNotification()
 const store = useAuthStore()
 const token = computed(() => store.authenticated);
 const user = computed(() => store.user)
+const processing = ref(false)
 const pending = ref(0)
 const resolved = ref(0)
 const rejected = ref(0)
@@ -77,14 +78,17 @@ const ticket = ref({
     user_id:user.value.id
 
 })
+const q = ref("")
 
 const clearErrors = () => {
     errors.value = []
 }
 
 const get = async () => {
+    processing.value = true
     try {
-        let response = await axios.get('/api/get-ticket')
+        let response = await axios.get(`/api/get-ticket?q=${q.value}`)
+        processing.value = false
         rows.value = (await response.data.tickets)
         pending.value = (await response.data.pending)
         total.value = (await response.data.total)
@@ -92,6 +96,7 @@ const get = async () => {
         resolved.value = (await response.data.resolved)
     }catch (e) {
         console.log(e.response)
+        processing.value = false
     }
 }
 const showEdit = async (id) => {
@@ -134,6 +139,11 @@ const replyTicket = async () => {
         alert(e.response)
     }
 }
+
+const filter = (val) => {
+    q.value = val
+    get();
+}
 const closeEdit = () => {
     let el = document.getElementById('cl')
     el.click()
@@ -141,7 +151,7 @@ const closeEdit = () => {
 const deleteEdit = async (params) => {
     if (window.confirm("Are you sure")) {
         try {
-            await axios.delete(`/api/get_topic/${params}`)
+            await axios.delete(`/api/get-ticket/${params}`)
             await get()
         }catch (e) {
             errors.value = e.response.data.errors
@@ -158,25 +168,25 @@ onMounted(async () => {
 <template>
     <div class="grid grid-cols-4 justify-center pb-4 gap-x-2">
         <div id="cl">
-            <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+            <a href="#" @click="filter('')"  class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-blue-900 dark:text-blue-500">{{ total }}</h5>
                 <p class="font-normal text-gray-700 dark:text-gray-400">Total Tickets </p>
             </a>
         </div>
         <div>
-            <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+            <a href="#" @click="filter('resolved')" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ resolved }}</h5>
                 <p class="font-normal text-gray-700 dark:text-gray-400">Resolved Tickets </p>
             </a>
         </div>
         <div>
-            <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+            <a href="#" @click="filter('rejected')" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ rejected }}</h5>
                 <p class="font-normal text-gray-700 dark:text-gray-400">Rejected Tickets</p>
             </a>
         </div>
         <div>
-            <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+            <a href="#" @click="filter('pending')" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
                 <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ pending }}</h5>
                 <p class="font-normal text-gray-700 dark:text-gray-400">Pending Tickets</p>
             </a>
@@ -252,6 +262,7 @@ onMounted(async () => {
     <vue-good-table
         :columns="columns"
         :rows="rows"
+        :is-loading="processing"
         :pagination-options="{
             enabled: true
         }"

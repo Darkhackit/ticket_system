@@ -4,6 +4,7 @@ import {initModals} from 'flowbite'
 import Papa from 'papaparse'
 import {useAuthStore} from '../store/auth'
 import axios from "axios";
+import { saveAs } from 'file-saver';
 import {jsPDF} from 'jspdf'
 import "jspdf-autotable"
 
@@ -13,6 +14,7 @@ const pending = ref(0)
 const resolved = ref(0)
 const rejected = ref(0)
 const total = ref(0)
+const processing = ref(false)
 
 const form = ref({
     s:'',
@@ -73,14 +75,16 @@ const exportPdf = async () => {
         pdf.autoTable(column,response.data)
         pdf.save()
     }catch (e) {
-
+        console.log(e)
     }
 
 }
 
 const get = async () => {
+    processing.value = true
     try {
         let response = await axios.post('/api/report',form.value)
+        processing.value = false
         rows.value = (await response.data.models)
         pending.value = (await response.data.pending)
         total.value = (await response.data.total)
@@ -88,20 +92,28 @@ const get = async () => {
         resolved.value = (await response.data.resolved)
     }catch (e) {
         console.log(e.response)
+        processing.value = false
     }
 }
 const exportCsv = async () => {
-    let response = await axios.post(`/api/print`,form.value)
-    const csv = Papa.unparse(response.data);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'table.csv');
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+   try {
+       let response = await axios.post(`/api/print`,form.value)
+        // return console.log(typeof response.data)
+       const csv = Papa.unparse(response.data,{escapeChar: '"'});
+       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+       // return console.log(blob)
+       saveAs(blob, 'tableData.csv');
+       // const url = URL.createObjectURL(blob);
+       // const link = document.createElement('a');
+       // link.setAttribute('href', url);
+       // link.setAttribute('download', 'table.csv');
+       // link.style.display = 'none';
+       // document.body.appendChild(link);
+       // link.click();
+       // document.body.removeChild(link);
+   }catch (e) {
+       console.log(e)
+   }
 }
 
 onMounted(async () => {
@@ -171,11 +183,11 @@ onMounted(async () => {
     <vue-good-table
         :columns="columns"
         :rows="rows"
+        :is-loading="processing"
         :group-options="{
             enabled: true,
             collapsable: true
           }"
-
     >
         <template #table-header-row="props">
             <span class="my-fancy-class">

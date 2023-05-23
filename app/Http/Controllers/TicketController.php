@@ -16,22 +16,41 @@ class TicketController extends Controller
 {
     public function index(): \Illuminate\Http\JsonResponse
     {
+        $q = \request('q');
+        $tickets;
         $pending = Ticket::where('status','pending')->count();
         $resolved = Ticket::where('status','resolved')->count();
         $rejected = Ticket::where('status','rejected')->count();
         $total = Ticket::count();
-        return response()->json(['tickets' => Ticket::orderBy('updated_at','desc')->get()->map(function ($ticket) {
-            return [
-                'id' => $ticket->id,
-                'ticket_number' => $ticket->ticket_number,
-                'branch' => $ticket->branch->name,
-                'email' => $ticket->email,
-                'priority' => $ticket->priority,
-                'status' => $ticket->status,
-                'file' => $ticket->images->first()?->url
+        if ($q) {
+            $tickets = Ticket::where('status',$q)->orderBy('updated_at','desc')->get()->map(function ($ticket) {
+                return [
+                    'id' => $ticket->id,
+                    'ticket_number' => $ticket->ticket_number,
+                    'branch' => $ticket->branch->name,
+                    'email' => $ticket->email,
+                    'priority' => $ticket->priority,
+                    'status' => $ticket->status,
+                    'file' => $ticket->images->first()?->url
 
-            ];
-        }),'pending' => $pending,'resolved' => $resolved,'rejected' => $rejected,'total' => $total]) ;
+                ];
+            });
+        }else {
+            $tickets = Ticket::orderBy('updated_at','desc')->get()->map(function ($ticket) {
+                return [
+                    'id' => $ticket->id,
+                    'ticket_number' => $ticket->ticket_number,
+                    'branch' => $ticket->branch->name,
+                    'email' => $ticket->email,
+                    'priority' => $ticket->priority,
+                    'status' => $ticket->status,
+                    'file' => $ticket->images->first()?->url
+
+                ];
+            });
+        }
+
+        return response()->json(['tickets' => $tickets,'pending' => $pending,'resolved' => $resolved,'rejected' => $rejected,'total' => $total]) ;
     }
     public function create(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -90,6 +109,12 @@ class TicketController extends Controller
             'status' => $ticket->status,
             'file' => $ticket->images->first()?->url
         ]);
+    }
+
+    public function delete(Ticket $ticket)
+    {
+        $ticket->delete();
+        return response()->json(['success' => true]);
     }
 
     public function getPendingTicket(): \Illuminate\Http\JsonResponse
@@ -203,7 +228,7 @@ class TicketController extends Controller
                         'priority' => $t->priority,
                         'resolved_by' => $t->user?->name
                     ];
-                })
+                })->values()
             ];
         });
         return response()->json(['models' => $models,'pending' => $pending,'resolved' => $resolved,'rejected' => $rejected,'total' => $total]);
@@ -226,7 +251,7 @@ class TicketController extends Controller
                 'status' => $t->status,
                 'resolved_by' => $t->user?->name
             ];
-        });
+        })->values();
         return response()->json($tickets);
     }
 }
